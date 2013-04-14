@@ -11,15 +11,13 @@ define(function (require) {
 		constructor: function (options) {
 			Backbone.View.apply(this, arguments);
 
-			// Рендер после инитиализации
-			this.autoRender = true;
-
 			// Приватный массив сабвью
 			this._subviews = [];
 
-			this.autoRender = 'autoRender' in options
+			// Рендер после инитиализации
+			this.autoRender = (options && 'autoRender' in options)
 				? options.autoRender
-				: this.autoRender;
+				: true;
 
 			if (this.autoRender) {
 				this.render()
@@ -108,21 +106,31 @@ define(function (require) {
 				selector = this.$el;
 			}
 
-			return this.mixinView(selector, view, 'append');
+			this.mixinView(selector, view, 'append');
 		},
 
 		replace: function (selector, view) {
-			return this.mixinView(selector, view, 'replaceWith');
+			this.mixinView(selector, view, 'replaceWith');
 		},
 
 		mixinView: function (selector, view, action) {
+			var $el = this._getSelector(selector);
+			this.addSubview(view);
+			$el[action](view.el);
+		},
+
+		_getSelector: function (selector) {
 			if (_.isString(selector)) {
 				selector = this.$(selector);
 			}
 
-			this.addSubview(view);
+			return selector;
+		},
 
-			return selector[action](view.el);
+		add: function (selector, ViewClass, options) {
+			options.el = this._getSelector(selector);
+			var view = new ViewClass(options);
+			this.addSubview(view);
 		},
 
 		addSubview: function (view) {
