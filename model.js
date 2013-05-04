@@ -4,9 +4,17 @@ define(function (require) {
 	var Backbone = require('backbone');
 	var _ = require('underscore');
 	var eventBrokerMixin = require('./event-broker');
+	var listenerMixin = require('./listener');
 
 
 	var Model = Backbone.Model.extend({
+
+		constructor: function () {
+			Backbone.Model.apply(this, arguments);
+
+			// Декларативные слушатели
+			this.delegateListeners();
+		},
 
 		toggleAttr: function (name) {
 			this.unary(name, function (value) {
@@ -21,7 +29,7 @@ define(function (require) {
 
 	});
 
-	_.extend(Model.prototype, eventBrokerMixin);
+	_.extend(Model.prototype, eventBrokerMixin, listenerMixin);
 
 	return Model;
 });

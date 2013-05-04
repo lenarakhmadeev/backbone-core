@@ -4,6 +4,7 @@ define(function (require) {
 	var Backbone = require('backbone');
 	var _ = require('underscore');
 	var eventBrokerMixin = require('./event-broker');
+	var listenerMixin = require('./listener');
 
 
 	var View = Backbone.View.extend({
@@ -13,6 +14,9 @@ define(function (require) {
 
 			// Приватный массив сабвью
 			this._subviews = [];
+
+			// Декларативные слушатели
+			this.delegateListeners();
 
 			// Рендер после инитиализации
 			this.autoRender = (options && 'autoRender' in options)
@@ -128,6 +132,7 @@ define(function (require) {
 		},
 
 		add: function (selector, ViewClass, options) {
+			options = options || {};
 			options.el = this._getSelector(selector);
 			var view = new ViewClass(options);
 			this.addSubview(view);
@@ -198,7 +203,7 @@ define(function (require) {
 
 	});
 
-	_.extend(View.prototype, eventBrokerMixin);
+	_.extend(View.prototype, eventBrokerMixin, listenerMixin);
 
 	return View;
 });
