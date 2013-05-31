@@ -16,15 +16,27 @@ define(function (require) {
 			this.delegateListeners();
 		},
 
+		unary: function (name, operation) {
+			var value = this.get(name);
+			this.set(name, operation(value));
+		},
+
 		toggleAttr: function (name) {
 			this.unary(name, function (value) {
 				return !value;
 			});
 		},
 
-		unary: function (name, operation) {
-			var value = this.get(name);
-			this.set(name, operation(value));
+		inc: function (name) {
+			this.unary(name, function (value) {
+				return value + 1;
+			});
+		},
+
+		dec: function (name) {
+			this.unary(name, function (value) {
+				return value - 1;
+			});
 		},
 
 		dispose: function () {
