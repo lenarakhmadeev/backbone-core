@@ -110,17 +110,17 @@ define(function (require) {
 				selector = this.$el;
 			}
 
-			this.mixinView(selector, view, 'append');
+			return this.mixinView(selector, view, 'append');
 		},
 
 		replace: function (selector, view) {
-			this.mixinView(selector, view, 'replaceWith');
+			return this.mixinView(selector, view, 'replaceWith');
 		},
 
 		mixinView: function (selector, view, action) {
 			var $el = this._getSelector(selector);
-			this.addSubview(view);
 			$el[action](view.el);
+			return this.addSubview(view);
 		},
 
 		_getSelector: function (selector) {
@@ -135,11 +135,12 @@ define(function (require) {
 			options = options || {};
 			options.el = this._getSelector(selector);
 			var view = new ViewClass(options);
-			this.addSubview(view);
+			return this.addSubview(view);
 		},
 
 		addSubview: function (view) {
 			this._subviews.push(view);
+			return view;
 		},
 
 		removeSubview: function (view) {
@@ -172,6 +173,10 @@ define(function (require) {
 
 			// Remove all event handlers on this module.
 			this.off();
+
+			if (typeof this.onDispose === 'function') {
+				this.onDispose();
+			}
 
 			// Remove the topmost element from DOM. This also removes all event
 			// handlers from the element and all its children.
